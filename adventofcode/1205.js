@@ -11,6 +11,7 @@ function scanStr(str) {
     if (Math.abs(thisChar.charCodeAt() - nextChar.charCodeAt()) === caseDiff) {
       flg = true;
       str.splice(i, 2);
+      // 递归不好 用while就行
       scanStr(str);
       break;
     }
@@ -24,4 +25,5 @@ function main() {
   // scanStr(Array.from('dabAcCaCBAcCcaDA'));
   scanStr(Array.from(input));
 }
+
 main();
