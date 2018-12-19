@@ -54,10 +54,9 @@ function getFormatLog() {
 }
 
 // function
-
+const sleepMinMap = {};
 function main() {
   const rows = getFormatLog();
-  fs.writeFileSync('output1204.json', JSON.stringify(rows));
   lastGuardID = rows[0].id;
   lastSleepState = '';
   rows.forEach((row, index) => {
@@ -67,7 +66,9 @@ function main() {
     // }
     let id = row.id ? row.id : lastGuardID;
     lastGuardID = id;
-
+    if (!sleepMinMap[id]) {
+      sleepMinMap[id] = new Array(60).fill(0);
+    }
     if (row.state === 'asleep') {
       lastSleepState = false;
       lastSleepMinute = row.hour !== 0 ? row.min - 60 : row.min;
@@ -80,25 +81,33 @@ function main() {
         guardSleepMap[id] += sleepTime + 1;
       }
       guardMaxSleepMap[id] = Math.max(guardMaxSleepMap[id] || 0, sleepTime);
-      if (id === '3299' && sleepTime === 53) {
-        console.log(rows[index - 3]);
-        console.log(rows[index - 2]);
-        console.log(rows[index - 1]);
-        console.log(row);
-        console.log(rows[index + 1]);
-        console.log(rows[index + 2]);
+      for (let i = lastSleepMinute; i < row.min; i++) {
+        sleepMinMap[id][i]++;
       }
+      // console.log(rows[index - 3]);
+      // console.log(rows[index - 2]);
+      // console.log(rows[index - 1]);
+      // console.log(row);
+      // console.log(rows[index + 1]);
+      // console.log(rows[index + 2]);
     }
     lastSleepState = row.state === 'asleep';
   });
 
   let max = 0;
-  for (const id in guardSleepMap) {
-    if (guardSleepMap[id] > max) {
-      max = guardSleepMap[id];
-      console.log(id, guardMaxSleepMap[id]);
+  // for (const id in guardSleepMap) {
+  //   if (guardSleepMap[id] > max) {
+  //     max = guardSleepMap[id];
+  //     console.log(id, guardMaxSleepMap[id]);
+  //   }
+  // }
+  for (const id in sleepMinMap) {
+    if (id == 829) {
+      console.log(sleepMinMap[id].indexOf(15));
     }
+    console.log(id, sleepMinMap[id].sort((a, b) => b - a)[0]);
   }
+  // console.log(mMap);
   // console.log(guardSleepMap);
   // console.log(guardMaxSleepMap);
 }
