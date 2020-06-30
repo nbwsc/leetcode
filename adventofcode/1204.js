@@ -1,5 +1,4 @@
 const fs = require('fs');
-const moment = require('moment');
 const input = fs.readFileSync('./input/1204').toString();
 
 let lastGuardID = '';
@@ -8,11 +7,6 @@ let now;
 let guardSleepMap = {};
 let lastSleepMinute = '';
 const guardMaxSleepMap = {};
-
-function parseRow(str) {
-  //[1518-05-26 23:59] Guard #71 begins shift
-  //[1518-06-01 00:50] wakes up
-}
 
 function toCompare(str) {
   return +str
@@ -37,7 +31,7 @@ function parseObj(str) {
     hour,
     min,
     id,
-    state,
+    state
   };
 }
 
@@ -69,8 +63,7 @@ function main() {
     lastGuardID = id;
 
     if (row.state === 'asleep') {
-      lastSleepState = false;
-      lastSleepMinute = row.hour !== 0 ? row.min - 60 : row.min;
+      lastSleepMinute = row.min;
     } else if (row.state === 'wake') {
       const sleepTime = row.min - lastSleepMinute - 1;
       // console.log(id, sleepTime);
@@ -99,8 +92,8 @@ function main() {
       console.log(id, guardMaxSleepMap[id]);
     }
   }
-  // console.log(guardSleepMap);
-  // console.log(guardMaxSleepMap);
+  console.log(guardSleepMap);
+  console.log(guardMaxSleepMap);
 }
 
 main();
